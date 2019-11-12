@@ -34,7 +34,7 @@
 #define heading_ki 0.01
 #define heading_kd 0.0
 
-#define line_kp 0.11
+#define line_kp 0.12
 #define line_ki 0.0
 #define line_kd 0.0
 
@@ -117,7 +117,7 @@ void setup()
   line_demand = 0.0;
   heading_demand = 0.0;
   heading_measurement = 0.0;
-  forward_speed = 22.0;
+  forward_speed = 19.0;
 
   last_distance = 0.0;
   distance_to_home = 0.0;
@@ -211,7 +211,7 @@ void driveHome() {
 
   heading_demand = pose.getHeadingTarget();
 
-  updateHeadingPID(20.0);
+  updateHeadingPID(18.0);
 
   // if (distance_to_home <= 50.0) {
   //   heading_pid.setGains(heading_kp + 20.0, heading_ki, heading_kd);
@@ -258,7 +258,7 @@ void refindLine() {
   // Turn left and then right to refind line
   if (!left_checked && !right_checked) {
     heading_demand = heading_measurement - M_PI/8;
-    updateSpeed(-15, 15);
+    updateSpeed(-16, 16);
     
     if (pose.getTheta() <= heading_demand) {
       left_checked = true;
@@ -267,7 +267,7 @@ void refindLine() {
 
   if (left_checked && !right_checked) {
     heading_demand = heading_measurement + M_PI/8;
-    updateSpeed(20, -20);
+    updateSpeed(16, -16);
 
     if (pose.getTheta() >= heading_demand) {
       right_checked = true;
@@ -276,7 +276,7 @@ void refindLine() {
 
   if (left_checked && right_checked) {
     heading_demand = heading_measurement;
-    updateSpeed(-20, 20);
+    updateSpeed(-16, 16);
 
     if (pose.getTheta() <= heading_demand) {
       updateSpeed(0, 0);
