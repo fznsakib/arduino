@@ -1,137 +1,20 @@
- 
-// Note that there is no #define for E0_B:.
-// it's a non-standard pin, check out setupEncoder0().
+// These #defines act like a find-and-replace
+// in your code, and make your code more readable.
+
 #define E1_A_PIN  7
 #define E1_B_PIN  23
 #define E0_A_PIN  26
-
-#define L_PWM_PIN 10
-#define L_DIR_PIN 16
-#define R_PWM_PIN  9
-#define R_DIR_PIN 15
-
-#define DIR_FWD LOW
-#define DIR_BKD HIGH
-
-byte init_speed;
-byte current_speed;
-byte move_speed;
-byte rate;
-
-unsigned long ts;
-
-bool clockwise;
-bool rotating;
+//E0_B_Pin is defined seperately later
 
 // Volatile Global variables used by Encoder ISR.
 volatile long count_right_e; // used by encoder to count the rotation
-volatile bool oldE1_A;       // used by encoder to remember prior state of A
-volatile bool oldE1_B;       // used by encoder to remember prior state of B
+volatile bool oldE1_A;  // used by encoder to remember prior state of A
+volatile bool oldE1_B;  // used by encoder to remember prior state of B
 
 volatile long count_left_e; // used by encoder to count the rotation
-volatile bool oldE0_A;      // used by encoder to remember prior state of A
-volatile bool oldE0_B;      // used by encoder to remember prior state of B
+volatile bool oldE0_A;  // used by encoder to remember prior state of A
+volatile bool oldE0_B;  // used by encoder to remember prior state of B
 
-float cm_count;
-float angle;
-float count_to_travel;
-float circumference;
-
-// put your setup code here, to run once:
-void setup() {
-
-  setupMotors();
-  
-  // These two function set up the pin
-  // change interrupts for the encoders.
-  // If you want to know more, find them
-  // at the end of this file.  
-  setupLeftEncoder();
-  setupRightEncoder();
-
-  ts = millis();
-
-  clockwise = true;
-  rotating = false;
-  move_speed = 40;
-  current_speed = 0;
-  
-  cm_count = 654.5/10;
-
-  // Circumference of robot is distance to travel 360 degrees
-  // Real circumference = 45.5cm  
-  circumference = 45;
-
-  angle = 270;
- 
-  count_to_travel = (cm_count * circumference) * (angle/360); 
-
-  analogWrite( L_PWM_PIN, 0 );
-  analogWrite( R_PWM_PIN, 0 );
-
-  // Initialise the Serial communication
-  // so that we can inspect the values of
-  // our encoder using the Monitor.
-  Serial.begin( 9600 );
-  Serial.println(" ***Reset*** ");
-}
-
-// put your main code here, to run repeatedly:
-void loop() {
-
-  // Output the count values for our encoders
-  // with a comma seperation, which allows for
-  // two lines to be drawn on the Plotter.
-  //
-  // NOTE: count_e0 and count_e1 values are now 
-  //       automatically updated by the ISR when 
-  //       the encoder pins change.  
-  //
-  Serial.print( count_left_e );
-  Serial.print( ", ");
-  Serial.println( count_right_e );
-  
-  unsigned long elapsed_time = millis() - ts;
-
-  if (rotating && rotation_complete()) {
-    Serial.println("STOPPING");
-    updateSpeed(0);
-    count_left_e = 0;
-    count_right_e = 0;
-    rotating = false;
-    delay(2000);
-  }
-    
-  if (!rotating) { 
-    Serial.println("STARTING");
-    rotating = true;
-    rotate();
-  }
-
-  // short delay so that our plotter graph keeps
-  // some history.
-  delay( 2 );
-}
-
-void rotate() {
-
-  digitalWrite( L_DIR_PIN, DIR_FWD  );
-  digitalWrite( R_DIR_PIN, DIR_BKD  );
-  updateSpeed(move_speed);
- 
-}
-
-bool rotation_complete() {
-  if (abs(count_left_e) > count_to_travel && abs(count_left_e) > count_to_travel) {
-    return true;
-  }
-  return false;
-}
-
-void updateSpeed(byte new_speed) {
-  analogWrite( L_PWM_PIN, new_speed );
-  analogWrite( R_PWM_PIN, new_speed );
-}
 
 // This ISR handles just Encoder 1
 // ISR to read the Encoder1 Channel A and B pins
@@ -165,7 +48,7 @@ ISR( INT6_vect ) {
   // This is an inefficient way of determining
   // the direction.  However it illustrates well
   // against the lecture slides.
-  switch ( state ) {
+  switch( state ) {
     case 0:                   break; // No movement.
     case 1:  count_right_e--; break;  // clockwise?
     case 2:  count_right_e++; break;  // anti-clockwise?
@@ -216,8 +99,6 @@ ISR( PCINT0_vect ) {
   // true value.
   newE0_A ^= newE0_B;
 
-
-  
   // Create a bitwise representation of our states
   // We do this by shifting the boolean value up by
   // the appropriate number of bits, as per our table
@@ -234,7 +115,7 @@ ISR( PCINT0_vect ) {
   // This is an inefficient way of determining
   // the direction.  However it illustrates well
   // against the lecture slides.  
-  switch ( state ) {
+  switch( state ) {
     case 0:                  break; // No movement.
     case 1:  count_left_e--; break;  // clockwise?
     case 2:  count_left_e++; break;  // anti-clockwise?
@@ -369,15 +250,4 @@ void setupLeftEncoder() {
 
     // Enable
     PCICR |= (1 << PCIE0);
-}
-
-void setupMotors() {
-  pinMode( L_PWM_PIN, OUTPUT );
-  pinMode( L_DIR_PIN, OUTPUT );
-  pinMode( R_PWM_PIN, OUTPUT );
-  pinMode( R_DIR_PIN, OUTPUT );
-
-  // Set initial direction for l and r wheels
-  digitalWrite( L_DIR_PIN, DIR_FWD  );
-  digitalWrite( R_DIR_PIN, DIR_FWD );
 }
