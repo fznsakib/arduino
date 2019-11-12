@@ -34,7 +34,7 @@
 #define heading_ki 0.01
 #define heading_kd 0.0
 
-#define line_kp 0.12
+#define line_kp 0.1
 #define line_ki 0.0
 #define line_kd 0.0
 
@@ -53,8 +53,6 @@ Kinematics pose;
 // Initialise PIDs
 PID heading_pid(heading_kp, heading_ki, heading_kd);
 PID line_pid(line_kp, line_ki, line_kd);
-PID left_pid(wheel_kp, wheel_ki, wheel_kd);
-PID right_pid(wheel_kp, wheel_ki, wheel_kd);
 
 // Timestamps
 float update_ts;
@@ -117,7 +115,7 @@ void setup()
   line_demand = 0.0;
   heading_demand = 0.0;
   heading_measurement = 0.0;
-  forward_speed = 19.0;
+  forward_speed = 18.0;
 
   last_distance = 0.0;
   distance_to_home = 0.0;
