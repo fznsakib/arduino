@@ -1,4 +1,4 @@
-# robotics-systems
+# arduino
 
 Code created to control an Arduino-compatible Romi 32U4.
 
