@@ -1,6 +1,6 @@
 # robotics-systems
 
-Code created to control an Arduino-compatible Romi 32U4 as part of the University of Bristol unit Robotics Systems.
+Code created to control an Arduino-compatible Romi 32U4.
 
 <p align="center"><img width="350" src="https://user-images.githubusercontent.com/15062683/68485397-25de3d80-0237-11ea-8356-1605d27faf49.jpg"></p>
 
