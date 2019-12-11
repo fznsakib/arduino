@@ -3,5 +3,6 @@
     "files.associations": {
         "iostream": "cpp",
         "iterator": "cpp"
-    }
+    },
+    "python.pythonPath": "/Users/faizaan/.pyenv/shims/python"
 }
